@@ -116,6 +116,42 @@ for (pct in c(10, 25, 50, 75, 90)){
     salary[, var_adj] <- round(100 * salary[, var] /salary$composite)
 }
 
+# Rename the variables to make them more comprehensible for shiny app
+salary <- select(salary, 
+                 primary_city = metro_short, 
+                 metro_name = metro_micro,
+                 state = prim_state, 
+                 area,
+                 occ_code, 
+                 occ_job_title = occ_title,
+                 occ_group = occ_group,
+                 total_employment = tot_emp,
+                 emp_prse,
+                 job_per_1000 = jobs_1000,
+                 location_quotient = loc.quotient,
+                 wage_mean = a_mean,
+                 mean_prse,
+                 wage_pct10 = a_pct10,
+                 wage_pct25 = a_pct25,
+                 wage_median = a_pct50,
+                 wage_pct75 = a_pct75,
+                 wage_pct90 = a_pct90,
+                 wage_pct10_adj = a_pct10_adj,
+                 wage_pct25_adj = a_pct25_adj,
+                 wage_median_adj = a_pct50_adj,
+                 wage_pct75_adj = a_pct75_adj,
+                 wage_pct90_adj = a_pct90_adj,
+                 coli_composite = composite,
+                 coli_grocery = grocery,
+                 coli_housing = housing,
+                 coli_utilities = utilities,
+                 coli_transportation = transportation,
+                 coli_healthcare = healthcare,
+                 coli_misc = misc)
+       
+
+(occ_title, occ_group, tot_emp, jobs_1000, loc.quotient, a_mean, a_pct_50, a_pct_50_adj, compsite)
+
 saveRDS(object = salary, file = "data/salary_coli.RDS")
 
 ########################################

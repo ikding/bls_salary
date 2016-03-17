@@ -1,32 +1,33 @@
 library(shiny)
-library(ggplot2)  # for the diamonds dataset
+
+# subset of variable names to display in table
+var_names_subset <- c("metro_name", "occ_job_title", "total_employment", "job_per_1000", "wage_mean", "wage_median", "wage_median_adj", "coli_composite")
 
 shinyUI(pageWithSidebar(
     headerPanel("Where Should You Work?"),
     sidebarPanel(
+        textInput("job_search_string", label = h3("Search Job Title"),
+                  value = "*" ),
+        helpText("Case insensitive. Use '*' character to select all job titles. Accepts Regular Expressions"),
+        
+        uiOutput("job_selector"),
+        
+        textOutput("text_tot_emp"),
+        textOutput("text_job_1000"),
+        textOutput("text_wage_median"),
+        textOutput("text_wage_median_adj"),
+        
+        checkboxGroupInput('show_vars', label = h3('Columns in data to show:'), names(salary),
+                           selected = var_names_subset),
+        
         helpText("Data Source:"),
         helpText("Salary: Bureau of Labor Statistics Salary Survey (May 2014)"),
-        helpText("Cost-of-Living: C2ER-COLI 2014 Annual Average"),
-        
-        textInput("job_title", label = h3("Search Job Title"),
-                  value = "" ),
-        
-        selectInput("select", label = h3("Select job"), 
-                    choices = list("Choice 1" = 1, "Choice 2" = 2,
-                                   "Choice 3" = 3), selected = 1),
-        
-        checkboxGroupInput('show_vars', 'Columns in diamonds to show:', names(diamonds),
-                           selected = names(diamonds)),
-        helpText('For the diamonds data, we can select variables to show in the table;
-                 for the mtcars example, we use orderClasses = TRUE so that sorted
-                 columns are colored since they have special CSS classes attached;
-                 for the iris data, we customize the length menu so we can display 5
-                 rows per page.')
+        helpText("Cost-of-Living: C2ER-COLI 2014 Annual Average")
   ),
   mainPanel(
     tabsetPanel(
-      tabPanel('diamonds',
-               dataTableOutput("mytable1")),
+      tabPanel('Salary Data',
+               dataTableOutput("table1")),
       tabPanel('second panel',
                helpText("Test"))
     )
