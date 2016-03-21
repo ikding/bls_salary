@@ -149,6 +149,15 @@ salary <- select(salary,
 
 saveRDS(object = salary, file = "data/salary_coli.RDS")
 
+
+# Playground for rCharts
+
+epi <- subset(salary, occ_job_title == "Epidemiologists")
+df <- df[order(df$value),]
+epi[order(-epi$wage_median),]
+nPlot(x = "metro_name", y = "wage_median",
+      data = epi[order(-epi$wage_median),], type = 'multiBarHorizontalChart')
+
 ########################################
 #### Quick Analysis of SDE salary --####
 ########################################

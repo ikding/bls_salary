@@ -1,4 +1,5 @@
 library(shiny)
+library(rCharts)
 
 # subset of variable names to display in table
 var_names_subset <- c("metro_name", "occ_job_title", "total_employment", "job_per_1000", "wage_mean", "wage_median", "wage_median_adj", "coli_composite")
@@ -12,10 +13,11 @@ shinyUI(pageWithSidebar(
         
         uiOutput("job_selector"),
         
-        textOutput("text_tot_emp"),
-        textOutput("text_job_1000"),
-        textOutput("text_wage_median"),
-        textOutput("text_wage_median_adj"),
+        htmlOutput("text_metro_insight"),
+#         textOutput("text_tot_emp"),
+#         textOutput("text_job_1000"),
+#         textOutput("text_wage_median"),
+#         textOutput("text_wage_median_adj"),
         
         checkboxGroupInput('show_vars', label = h3('Columns in data to show:'), names(salary),
                            selected = var_names_subset),
@@ -26,10 +28,16 @@ shinyUI(pageWithSidebar(
   ),
   mainPanel(
     tabsetPanel(
-      tabPanel('Salary Data',
+      tabPanel('Salary Data Table',
                dataTableOutput("table1")),
-      tabPanel('second panel',
-               helpText("Test"))
-    )
+      tabPanel('Bar Chart',
+               htmlOutput("text_job_title"),
+               uiOutput("chart_var_select"),
+               numericInput("top_n", "Top N Metros:", 7,
+                            min = 1, max = 20),
+               showOutput("barchart1", "nvd3")
+#                dataTableOutput("barchart1")
+              )
+        )
   )
 ))
