@@ -8,6 +8,7 @@ library(ggplot2)
 library(RColorBrewer)
 library(reshape2)
 library(scales)
+library(ggmap)
 
 ########################################
 #### Load Raw Data Files ----       ####
@@ -146,6 +147,22 @@ salary <- select(salary,
                  coli_transportation = transportation,
                  coli_healthcare = healthcare,
                  coli_misc = misc)
+
+########################################
+#### Geocoding using Google API ----####
+########################################
+
+metro_lat_long <- data.frame(metro = as.character(unique(salary$primary_city)),
+                             lon = NA, lat = NA,
+                             stringsAsFactors = F)
+
+for (i in 1:dim(metro_lat_long)[1]){
+    pair = geocode(metro_lat_long$metro[i], source = "google")
+    metro_lat_long$lon[i] <- pair$lon
+    metro_lat_long$lat[i] <- pair$lat
+}
+
+salary <- merge(salary, metro_lat_long, by.x = "primary_city", by.y = "metro", all.x = T, sort = F)
 
 saveRDS(object = salary, file = "data/salary_coli_2014.RDS")
 

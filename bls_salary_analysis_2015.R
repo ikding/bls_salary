@@ -7,6 +7,7 @@ library(ggplot2)
 library(RColorBrewer)
 library(reshape2)
 library(scales)
+library(ggmap)
 
 ########################################
 #### Load Raw Data Files ----       ####
@@ -67,10 +68,13 @@ table(bls_name %in% coli_name)
 table(coli_name %in% bls_name)
 
 sort(coli_name[!(coli_name %in% bls_name)])
-sort(bls_name[!(bls_name %in% coli_name)]) ###
+sort(bls_name[!(bls_name %in% coli_name)])
 
-# Manual correction of coli city names to get better match 
-# (turned out to be not necessary for 2015 data)
+# Manual correction of data city names to correct some typo
+data[with(data, metro_short == "Louisville/Jefferson County KY-IN"),]$metro_short <- "Louisville KY-IN"
+data[with(data, metro_short == "Mayag\xfc\xbe\x99\xa3\xa4\xbcez PR"),]$metro_short <- "Mayaguez PR"
+data[with(data, metro_short == "San Germ\xfc\xbe\x8d\xb3\xa0\xbcn PR"),]$metro_short <- "San German PR"
+
 coli[!(coli$metro_short %in% bls_name), c("metro_short", "metro_micro")]
 coli$metro_short <- paste(coli$metro_first_city, coli$metro_state)
 
@@ -135,5 +139,21 @@ salary <- select(salary,
                  coli_transportation = transportation,
                  coli_healthcare = healthcare,
                  coli_misc = misc)
+
+########################################
+#### Geocoding using Google API ----####
+########################################
+
+metro_lat_long <- data.frame(metro = as.character(unique(salary$primary_city)),
+                             lon = NA, lat = NA,
+                             stringsAsFactors = F)
+
+for (i in 1:dim(metro_lat_long)[1]){
+    pair = geocode(metro_lat_long$metro[i], source = "google")
+    metro_lat_long$lon[i] <- pair$lon
+    metro_lat_long$lat[i] <- pair$lat
+}
+
+salary <- merge(salary, metro_lat_long, by.x = "primary_city", by.y = "metro", all.x = T, sort = F)
 
 saveRDS(object = salary, file = "data/salary_coli_2015.RDS")
