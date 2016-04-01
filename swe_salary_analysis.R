@@ -33,7 +33,7 @@ salary_swe <- salary[grepl("Software", salary$occ_job_title), c("metro_name", "y
     group_by(year, metro_name, add = TRUE) %>%
     summarise(sum_employment = sum(total_employment))
 
-# Top 7 metro with most total_employment of software engineers are:
+# Top 9 metro with most total_employment of software engineers are:
 # 2014: San Jose, Washington DC, Seattle, New York, Boston, Chicago, San Francisco
 # 2015: San Jose, New York, Seattle, Washington, Boston, San Francisco, Atlanta
 # But I wonder if that is partly due to boundary change in BLS data between 2014 and 2015?
@@ -46,7 +46,8 @@ metro_names <- salary_swe[grep(pattern = "San Jose|Washington|Seattle|New York|B
 metro_names
 
 # Keep only swe-salary data in these 9 metros 
-salary_swe <- subset(salary, metro_name %in% metro_names)
+# salary_swe <- subset(salary, metro_name %in% metro_names)
+salary_swe <- salary
 salary_swe <- salary_swe[grepl("Software", salary_swe$occ_job_title) & !is.na(salary_swe$wage_mean),]
 
 # Compute weighted mean of the salary in each quantile
@@ -86,6 +87,13 @@ salary_dist$frac.200k <- pnorm(200000, mean = salary_dist$mu, sd = salary_dist$s
 salary_dist_long = melt(salary_dist, id.vars = c("metro_abb", "year"), measure.vars = c("frac.200k"))
 salary_dist_wide = dcast(salary_dist_long, metro_abb ~ year, )
 cbind(salary_dist_wide[,c(1)], round(salary_dist_wide[,c(2:3)]*100, 2))
+
+# Top-ranked metro, in terms of coli-adjusted salary
+salary_dist %>% 
+    filter(year == 2015, total_emp >= 2000) %>% 
+    arrange(desc(pct50_adj)) %>% 
+    select(metro_name, total_emp, pct50_adj) %>%
+    top_n(10)
 
 # Plot the distributions (unadjusted salary)
 salary_plot <- list()
