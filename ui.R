@@ -23,8 +23,8 @@ shinyUI(pageWithSidebar(
                            selected = var_names_subset),
         
         helpText("Data Source:"),
-        helpText("Salary: Bureau of Labor Statistics Salary Survey (May 2014)"),
-        helpText("Cost-of-Living: C2ER-COLI 2014 Annual Average")
+        helpText("Salary: Bureau of Labor Statistics Salary Survey (May 2015)"),
+        helpText("Cost-of-Living: C2ER-COLI 2015 Annual Average")
     ),
     
     mainPanel(
