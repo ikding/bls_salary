@@ -1,6 +1,5 @@
 library(shiny)
 library(rCharts)
-library(leaflet)
 
 # subset of variable names to display in table
 var_names_subset <- c("metro_name", "occ_job_title", "total_employment", "job_per_1000", "wage_mean", "wage_median", "wage_median_adj", "coli_composite")
@@ -26,22 +25,19 @@ shinyUI(pageWithSidebar(
         helpText("Data Source:"),
         helpText("Salary: Bureau of Labor Statistics Salary Survey (May 2014)"),
         helpText("Cost-of-Living: C2ER-COLI 2014 Annual Average")
-  ),
-  
-  mainPanel(
-      tabsetPanel(
-          tabPanel('Map',
-                   leafletOutput("map")
-                   ),
-          tabPanel('Salary Data Table',
-                   dataTableOutput("table1")),
-          tabPanel('Bar Chart',
-                   htmlOutput("text_job_title"),
-                   uiOutput("chart_var_select"),
-                   numericInput("top_n", "Top N Metros:", 7,
-                                min = 1, max = 20),
-                   showOutput("barchart1", "nvd3")
-          )
-      )
-  )
+    ),
+    
+    mainPanel(
+        tabsetPanel(
+            tabPanel('Salary Data Table',
+                     dataTableOutput("table1")),
+            tabPanel('Bar Chart',
+                     htmlOutput("text_job_title"),
+                     uiOutput("chart_var_select"),
+                     numericInput("top_n", "Top N Metros:", 7,
+                                  min = 1, max = 20),
+                     showOutput("barchart1", "nvd3")
+            )
+        )
+    )
 ))

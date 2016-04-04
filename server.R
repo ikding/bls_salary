@@ -1,9 +1,9 @@
+
 # Load libraries
 library(shiny)
 library(rCharts)
 library(BH) # needed for dplyr - load it here so shiny knows to build it during deployment
 library(dplyr)
-library(leaflet)
 
 # Load data that only needs to be loaded when app starts
 salary <- readRDS("data/salary_coli_2015.RDS")
@@ -14,22 +14,6 @@ shinyServer(function(input, output, session) {
     # Salary data that is reactive to the job title and variables selected
     salary_data <- reactive({
         salary[salary$occ_job_title == input$select_job, input$show_vars, drop = F]
-    })
-    
-    salary_map_data <- reactive({
-        salary[salary$occ_job_title == input$select_job, ]
-    })
-    
-    # Leaflet viz
-    output$map <- renderLeaflet({
-        leaflet(salary_map_data()) %>%
-            addTiles() %>%
-#             addProviderTiles("CartoDB.Positron") %>%
-            addMarkers()
-#             addMarkers(lng = ~lon, lat = ~lat, # weight = 1,
-# #                        radius = 100, # ~(wage_median),
-#                        popup = ~primary_city
-#             )
     })
     
     # a large table, reative to input$show_vars
@@ -82,8 +66,8 @@ shinyServer(function(input, output, session) {
         salary_subset = salary_subset[c(1:input$top_n),]
         
         p <- nPlot(x = "metro_name", y = input$select_var,
-              data = salary_subset,
-              type = 'multiBarChart')
+                   data = salary_subset,
+                   type = 'multiBarChart')
         
         # Format tweaking to accommodate long x-axis labels (metro names)
         p$chart(reduceXTicks = FALSE)
@@ -91,13 +75,12 @@ shinyServer(function(input, output, session) {
         
         return(p)
     })
-
+    
     output$downloadData <- downloadHandler(
         filename = function() {paste0("salary_data", 
-#                                       gsub("[,]?[-\ /][-]*", "_", input$select_job), 
+                                      # gsub("[,]?[-\ /][-]*", "_", input$select_job), 
                                       '.csv')},
         content = function(file) {
             write.csv(salary_data(), file, row.names = F)
-    })
-
+        })
 })
